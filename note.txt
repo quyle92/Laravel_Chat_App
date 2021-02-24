@@ -1,0 +1,10 @@
+1/ remember to add "use..." in ServiceProvider.php, else serivce provider will not work...
+2/Pusher Event not fired:
+- must declare property at ChatEvent.php and declared as public, eg:
+public $message;
+public $user;
+- remember implementing ShouldBroadcast interface at ChatEvent.php, eg:
+class ChatEvent implements ShouldBroadcast {
+	
+	
+}
