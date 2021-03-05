@@ -32,8 +32,10 @@ const app = new Vue({
     el: '#app',
     data:{
     	message: '',
+        sender: '',
         chat: {
-            message:[]
+            message:[],
+            user:[]
         },
         newName: '',
         names: ["arron", "bernard", "tom"]
@@ -42,21 +44,47 @@ const app = new Vue({
     	send: function (e){
     		if(this.message.length > 0)
             {
-               this.chat.message.push(this.message);
-               this.message = ""
+                //console.log(this.chat.user);
+                this.chat.message.push(this.message);
+                axios.get('/user')
+                .then( (response) => { //(1)
+                    this.chat.user.push(response.data.name); 
+                    this.sender = response.data.name; 
+                })
+                .catch(  (error) => { //(1)
+                    console.log(error);
+                });
+
+                axios.post('/send', {
+                    message: this.message,
+                })
+                .then( (response) => { //(1)
+                    console.log(response.data);
+                    
+                })
+                .catch(  (error) => { //(1)
+                    console.log(error);
+                });
             }
+
+            this.message = "";
     	},
         addName: function (e){
             this.names.push(this.newName);
             this.newName = ""
         }
     },
-    mounted(){
+    mounted(){//console.log('component mounted');
         Echo.private('chat')
-        .listen('ChatEvent', (e) => { 
-            console.log(e.message);
+        .listen('ChatEvent', (e) => { //(1) 
+            this.chat.message.push(e.message);
+            this.chat.user.push(e.user);
         });
     },
 });
 
 app.newName = 'Dean'
+
+/**Note */
+//(1) must use ES6 arrow function here, else Can’t access component data from within lifecycle hook.
+//ref: https://forum.vuejs.org/t/cant-access-component-data-from-within-lifecycle-hook/12078

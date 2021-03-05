@@ -1,6 +1,6 @@
 <?php
 
-use App\Events\TaskEvent;
+use App\Events\ChatEvent;
 use App\User;
 
 /*
@@ -22,28 +22,20 @@ use App\User;
 // });
 
 Route::get('chat', 'ChatController@chat')->middleware('auth');
-Route::get('send', 'ChatController@send')->middleware('auth');
+Route::post('send', 'ChatController@send')->middleware('auth');
+Route::get('user', 'ChatController@findUser');
 
 Route::get('/', 'Controller@handle');
 
 Route::get('event', function ()
 {	
 	$user = User::find(Auth::id());
-	event(new TaskEvent('this is ', $user));
+	event(new ChatEvent('this is ', $user));
 	
-	event(new App\Events\StatusLiked('Someone'));
 	return "Event has been sent!";
-});
+})->middleware('auth');
 
-Route::get('listen', function ()
-{
-	return view('listenBroadcast');
-});
 
-Route::get('listener', function ()
-{
-	return view('listener');
-});
 
 
 Auth::routes();

@@ -19,7 +19,7 @@
 			<div class="offset-4 col-md-4">
 				<li class="list-group-item active">Chat room</li>
 				<ul class="list-group" v-chat-scroll>					
-					<message v-for="value in chat.message" v-bind:key="value.index" color='warning' badge-color="danger">@{{value}}</message>
+					<message v-for="(value, index) in chat.message" v-bind:key="value.index" v-bind:color='["warning","success"]' badge-color="danger" :user='chat.user[index]' :nguoi-gui='sender'>@{{value}}</message>
 					<input type="text"  class="form-control" value="" v-model='message' @keyup.enter='send'>
 				</ul>
 			</div>

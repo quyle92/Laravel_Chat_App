@@ -1,26 +1,31 @@
 <template>  
      <div>         
-        <li class="list-group-item" :class="className"><slot></slot></li>
-        <small class="float-right" :class="badgeClass">you</small>  
+         <small  :class="badgeClass" >{{user}}</small> 
+        <li class="list-group-item" :class="className" style="margin:1.1em 0;"><slot></slot></li>
+         
     </div>
+
 </template>
 
 <script>
     export default {
         props:[
             'color',
-            'badgeColor'
+            'badgeColor',
+            'user',
+            'nguoiGui'
         ],
         computed:{
             className(){
-                return 'list-group-item-' + this.color;
+                return this.user == this.nguoiGui ? 'list-group-item-' + this.color[0] : 'list-group-item-' + this.color[1];
             },
             badgeClass(){
-                return 'badge badge-' + this.badgeColor
+                //return 'badge badge-' + this.badgeColor;
+                return this.user == this.nguoiGui ? 'float-right badge badge-' + this.badgeColor : 'float-left badge badge-' + this.badgeColor;
             }
         },  
         mounted() {
-            console.log('message.vue mounted.')
+            //console.log('message.vue mounted.')
         }
     }
 </script>
