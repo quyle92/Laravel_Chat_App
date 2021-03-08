@@ -35,10 +35,28 @@ const app = new Vue({
         sender: '',
         chat: {
             message:[],
-            user:[]
+            user:[],
+            time:[]
         },
-        newName: '',
-        names: ["arron", "bernard", "tom"]
+        name: '',
+        typing : ''
+    },
+    watch: {
+        message(){
+            axios.get('/user')  
+            .then( (response) => { //(1)
+                Echo.private(`chat`)
+                .whisper('typing', {
+                    name: this.message,
+                    user: response.data.name
+                });
+            })
+            .catch(  (error) => { //(1)
+                console.log(error);
+            });
+            
+            
+        }
     },
     methods:{
     	send: function (e){
@@ -46,9 +64,11 @@ const app = new Vue({
             {
                 //console.log(this.chat.user);
                 this.chat.message.push(this.message);
+                this.chat.time.push(this.getTime());
+
                 axios.get('/user')
                 .then( (response) => { //(1)
-                    this.chat.user.push(response.data.name); 
+                    this.chat.user.push( response.data.name ); 
                     this.sender = response.data.name; 
                 })
                 .catch(  (error) => { //(1)
@@ -60,7 +80,6 @@ const app = new Vue({
                 })
                 .then( (response) => { //(1)
                     console.log(response.data);
-                    
                 })
                 .catch(  (error) => { //(1)
                     console.log(error);
@@ -68,22 +87,52 @@ const app = new Vue({
             }
 
             this.message = "";
+
     	},
-        addName: function (e){
-            this.names.push(this.newName);
-            this.newName = ""
+        getTime(){
+            let time = new Date();
+            function addZero(i) {
+                if (i < 10) {
+                  i = "0" + i;
+                }
+                return i;
+              }
+            var m = addZero(time.getMinutes());
+            return time.getHours() + ":" + m;
         }
+       
     },
     mounted(){//console.log('component mounted');
         Echo.private('chat')
         .listen('ChatEvent', (e) => { //(1) 
             this.chat.message.push(e.message);
             this.chat.user.push(e.user);
+            this.chat.time.push(this.getTime());
+        })
+        .listenForWhisper('typing', (e) => {
+            if( e.name !== '' ){
+                this.typing = e.user + " is typing...";
+            }
+            else{
+                this.typing = "";
+            }
         });
+
+        Echo.join(`chat`)
+        .here((users) => {
+            console.log(users);
+        })
+        .joining((user) => {
+            console.log(user.name);
+        })
+        .leaving((user) => {
+            console.log(user.name);
+        });
+
     },
 });
 
-app.newName = 'Dean'
+app.name = 'Dean'
 
 /**Note */
 //(1) must use ES6 arrow function here, else Can’t access component data from within lifecycle hook.

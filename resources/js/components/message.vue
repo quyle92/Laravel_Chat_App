@@ -1,6 +1,7 @@
 <template>  
      <div>         
-         <small  :class="badgeClass" >{{user}}</small> 
+        <small  :class="badgeClass" >{{user}} : {{time}}</small> 
+        <span id='time'>{{time}}</span>
         <li class="list-group-item" :class="className" style="margin:1.1em 0;"><slot></slot></li>
          
     </div>
@@ -13,7 +14,8 @@
             'color',
             'badgeColor',
             'user',
-            'nguoiGui'
+            'nguoiGui',
+            'time'
         ],
         computed:{
             className(){
@@ -29,3 +31,9 @@
         }
     }
 </script>
+
+<style>
+span#time {
+    font-size: 10px;
+}
+</style>

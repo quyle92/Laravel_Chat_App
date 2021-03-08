@@ -16,10 +16,23 @@
 <body>
 	<div class="container">
 		<div class="row" id="app">
-			<div class="offset-4 col-md-4">
+			<div class="offset-4 col-md-8 offset-sm-1 col-sm-10">
 				<li class="list-group-item active">Chat room</li>
+				
+				<span class="badge badge-pill">@{{ typing }}</span>
+				
 				<ul class="list-group" v-chat-scroll>					
-					<message v-for="(value, index) in chat.message" v-bind:key="value.index" v-bind:color='["warning","success"]' badge-color="danger" :user='chat.user[index]' :nguoi-gui='sender'>@{{value}}</message>
+					<message 
+					v-for="(value, index) in chat.message" 
+					v-bind:key="value.index" 
+					v-bind:color='["warning","success"]' 
+					badge-color="danger" 
+					:user='chat.user[index]' 
+					:nguoi-gui='sender'
+					:time = chat.time[index]
+					>@{{value}}
+					
+					</message>
 					<input type="text"  class="form-control" value="" v-model='message' @keyup.enter='send'>
 				</ul>
 			</div>
