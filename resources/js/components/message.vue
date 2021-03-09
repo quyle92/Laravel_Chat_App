@@ -28,6 +28,8 @@
         },  
         mounted() {
             //console.log('message.vue mounted.')
+
+
         }
     }
 </script>

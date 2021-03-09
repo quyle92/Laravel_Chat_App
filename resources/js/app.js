@@ -7,8 +7,14 @@
 require('./bootstrap');
 window.Vue = require('vue');
  
-import VueChatScroll from 'vue-chat-scroll'
-Vue.use(VueChatScroll)
+import VueChatScroll from 'vue-chat-scroll';
+Vue.use(VueChatScroll);
+
+import VueToast from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-sugar.css';
+Vue.use(VueToast);
+
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -117,16 +123,38 @@ const app = new Vue({
                 this.typing = "";
             }
         });
-
         Echo.join(`chat`)
         .here((users) => {
-            console.log(users);
+
+            axios.get('/user')
+                .then( (response) => { //(1)
+                    this.sender = response.data.name; 
+
+                    let usersArr = users.map( u => u.name == this.sender ? 'you' : u.name );
+                    Vue.$toast.open({
+                        message: usersArr.join(', ') + ' are in this chat session.',
+                        type: 'info',
+                    });
+                })
+                .catch(  (error) => { //(1)
+                    console.log(error);
+                });
+            
         })
         .joining((user) => {
-            console.log(user.name);
+            //console.log(user.name);
+            Vue.$toast.open({
+                message: user.name + ' has just joined!',
+                type: 'success',
+                // all of other options may go here
+            });
         })
         .leaving((user) => {
-            console.log(user.name);
+            Vue.$toast.open({
+                message: user.name + ' has just left the chat sesssion!',
+                type: 'error',
+                // all of other options may go here
+            });
         });
 
     },
